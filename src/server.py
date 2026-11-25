@@ -1,6 +1,7 @@
 """URL 단축 웹 서버. 표준 모듈 http.server만 쓴다.
 
     make serve                         (= python3 src/server.py --port 8000)
+    make serve TABLE=linear            선형 탐사 테이블로 실행 (과제)
     python3 src/server.py --demo       예시 URL 몇 개를 미리 넣고 시작
 
     GET  /            URL 입력 폼
@@ -22,13 +23,21 @@ from urllib.parse import parse_qsl, urlsplit
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from hash_table import HORNER_BASE, horner_steps  # noqa: E402
+from hash_table import HORNER_BASE, HashTable, horner_steps  # noqa: E402
+from linear_probing import LinearProbingTable  # noqa: E402
 from shortener import MAX_URL_LENGTH, Shortener  # noqa: E402
 
 MAX_BODY = 8 * 1024
 RESERVED = ("", "shorten", "table", "favicon.ico")
 
+# --table 값, 테이블 클래스, 화면에 쓸 이름
+TABLE_CHOICES = (
+    ("chaining", HashTable, "개별 체이닝"),
+    ("linear", LinearProbingTable, "선형 탐사"),
+)
+
 SHORTENER = Shortener()
+TABLE_LABEL = "개별 체이닝"
 LOCK = threading.Lock()
 
 DEMO_URLS = [
@@ -116,6 +125,12 @@ table.steps th, table.steps td { border:1px solid var(--line); padding:2px 6px; 
 table.steps th { background: var(--soft); font-weight:600; }
 table.steps td.ch { text-align:center; }
 .final { font-size:.85rem; margin-top:4px; }
+.node.moved { border-color:#f2b38f; background:#fff6f0; }
+.probe { font-size:.82rem; color: var(--ink2); margin-top:2px; word-break: break-all; }
+.slot.filled { background: linear-gradient(90deg, #f6f7f9 0, #f6f7f9 62px, transparent 62px); }
+.cl { font-size:.7rem; color:#b3541e; line-height:1.2; margin-top:4px; }
+.badge { display:inline-block; font-size:.8rem; padding:1px 8px; border-radius:999px;
+         background: var(--soft); border:1px solid var(--line); color: var(--ink2); }
 """
 
 
@@ -144,8 +159,8 @@ def form_html(value="", error=None):
 def home_page(value="", error=None):
     body = """
 <h1>URL 단축기</h1>
-<p class="sub">긴 URL을 넣으면 짧은 링크를 만들어 줍니다. 저장은 직접 만든 해시 테이블에 합니다.</p>
-""" + form_html(value, error)
+<p class="sub">긴 URL을 넣으면 짧은 링크를 만들어 줍니다. 저장은 직접 만든 해시 테이블에 합니다. <span class="badge">{}</span></p>
+""".format(esc(TABLE_LABEL)) + form_html(value, error)
     return page("URL 단축기", body)
 
 
@@ -201,19 +216,76 @@ def steps_table(key, m, slot):
 </details>""".format(b=HORNER_BASE, m=m, rows="\n".join(rows), slot=slot)
 
 
+def node_html(view, key, value, base_url, key_name, value_name, m, home, extra="", moved=False):
+    if view == "code":
+        code = key
+    else:
+        code = value
+    short = "{}/{}".format(base_url, code)
+    return """
+<div class="node{cls}">
+  <div class="key"><b>{kname}</b> {key}</div>
+  <div class="meta">{vname} <code>{value}</code> · <a href="{short}">{short_txt}</a></div>
+  {extra}
+  {steps}
+</div>""".format(cls=" moved" if moved else "", kname=key_name, key=esc(key), vname=value_name,
+                 value=esc(value), short=esc(short), short_txt=esc(short), extra=extra,
+                 steps=steps_table(key, m, home))
+
+
 def table_page(base_url, view):
     with LOCK:
         if view == "code":
             table, key_name, value_name = SHORTENER.by_code, "코드", "URL"
         else:
             table, key_name, value_name = SHORTENER.by_url, "URL", "코드"
+        linear = isinstance(table, LinearProbingTable)
         m = table.capacity
         n = len(table)
         slots = table.slots()
         load = table.load_factor()
         max_load = table.max_load
         resizes = table.resize_count
+        paths = []
+        clusters = []
+        if linear:
+            for chain in slots:
+                paths.append(table.probe_sequence(chain[0][0]) if chain else None)
+            clusters = table.clusters()
 
+    switch = ('<a href="/table">URL → 코드 테이블 보기</a>' if view == "code"
+              else '<a href="/table?view=code">코드 → URL 테이블 보기</a>')
+    if linear:
+        lines, stats = linear_rows(slots, paths, clusters, view, base_url, key_name, value_name, m, n)
+        method = "선형 탐사 (빈 칸 ∅, 충돌하면 다음 칸으로. 마지막 칸 다음은 0번)"
+    else:
+        lines, stats = chaining_rows(slots, view, base_url, key_name, value_name, m)
+        method = "개별 체이닝"
+
+    body = """
+<h1>해시 테이블 ({kname} → {vname})</h1>
+<p class="sub">{method}. 해시는 <span class="formula">h = (h × {b} + ord(글자)) mod M</span>. {switch}</p>
+<div class="stats">
+  <div class="stat"><b>{m}</b><span>칸 수 M</span></div>
+  <div class="stat"><b>{n}</b><span>키 개수 n</span></div>
+  <div class="stat"><b>{load:.3f}</b><span>적재율 n/M</span></div>
+  <div class="stat"><b>{max_load}</b><span>max_load</span></div>
+  {stats}
+  <div class="stat"><b>{resizes}</b><span>늘린 횟수</span></div>
+</div>
+<div class="slots">
+{lines}
+</div>""".format(kname=key_name, vname=value_name, method=method, b=HORNER_BASE, switch=switch,
+                 m=m, n=n, load=load, max_load="없음" if max_load is None else max_load,
+                 stats=stats, resizes=resizes, lines="\n".join(lines))
+    return page("해시 테이블", body)
+
+
+def stat_html(value, label):
+    return '<div class="stat"><b>{}</b><span>{}</span></div>'.format(esc(str(value)), esc(label))
+
+
+def chaining_rows(slots, view, base_url, key_name, value_name, m):
     longest = 0
     used = 0
     lines = []
@@ -226,43 +298,54 @@ def table_page(base_url, view):
         for j, (key, value) in enumerate(chain):
             if j > 0:
                 parts.append('<span class="arrow">→</span>')
-            if view == "code":
-                code, url = key, value
-            else:
-                url, code = key, value
-            short = "{}/{}".format(base_url, code)
-            parts.append("""
-<div class="node">
-  <div class="key"><b>{kname}</b> {key}</div>
-  <div class="meta">{vname} <code>{value}</code> · <a href="{short}">{short_txt}</a></div>
-  {steps}
-</div>""".format(kname=key_name, key=esc(key), vname=value_name, value=esc(value),
-                 short=esc(short), short_txt=esc(short), steps=steps_table(key, m, i)))
+            parts.append(node_html(view, key, value, base_url, key_name, value_name, m, i))
         if not parts:
             parts.append('<span class="empty">∅</span>')
         lines.append('<div class="slot"><div class="idx">[{}]</div><div class="chain">{}</div></div>'
                      .format(i, "".join(parts)))
+    stats = stat_html(used, "사용 중인 칸") + stat_html(longest, "가장 긴 체인")
+    return lines, stats
 
-    switch = ('<a href="/table">URL → 코드 테이블 보기</a>' if view == "code"
-              else '<a href="/table?view=code">코드 → URL 테이블 보기</a>')
-    body = """
-<h1>해시 테이블 ({kname} → {vname})</h1>
-<p class="sub">개별 체이닝. 해시는 <span class="formula">h = (h × {b} + ord(글자)) mod M</span>. {switch}</p>
-<div class="stats">
-  <div class="stat"><b>{m}</b><span>칸 수 M</span></div>
-  <div class="stat"><b>{n}</b><span>키 개수 n</span></div>
-  <div class="stat"><b>{load:.3f}</b><span>적재율 n/M</span></div>
-  <div class="stat"><b>{max_load}</b><span>max_load</span></div>
-  <div class="stat"><b>{used}</b><span>사용 중인 칸</span></div>
-  <div class="stat"><b>{longest}</b><span>가장 긴 체인</span></div>
-  <div class="stat"><b>{resizes}</b><span>늘린 횟수</span></div>
-</div>
-<div class="slots">
-{lines}
-</div>""".format(kname=key_name, vname=value_name, b=HORNER_BASE, switch=switch, m=m, n=n,
-                 load=load, max_load="없음" if max_load is None else max_load, used=used,
-                 longest=longest, resizes=resizes, lines="\n".join(lines))
-    return page("해시 테이블", body)
+
+def linear_rows(slots, paths, clusters, view, base_url, key_name, value_name, m, n):
+    cluster_len_at = [0] * m
+    longest = 0
+    for start, length in clusters:
+        cluster_len_at[start] = length
+        if length > longest:
+            longest = length
+
+    total_probes = 0
+    moved_count = 0
+    lines = []
+    for i, chain in enumerate(slots):
+        label = ""
+        if cluster_len_at[i]:
+            label = '<div class="cl">클러스터<br>{}칸</div>'.format(cluster_len_at[i])
+        if not chain:
+            content = '<span class="empty">∅</span>'
+        else:
+            key, value = chain[0]
+            path = paths[i]
+            home = path[0]
+            distance = len(path) - 1
+            total_probes += len(path)
+            if distance:
+                moved_count += 1
+                route = " → ".join("[{}]".format(p) for p in path)
+                extra = ('<div class="probe">홈 칸 [{}]에서 {}칸 밀림 · 탐사 {} ({}칸 확인)</div>'
+                         .format(home, distance, route, len(path)))
+            else:
+                extra = '<div class="probe">홈 칸 그대로 [{}] (1칸 확인)</div>'.format(home)
+            content = node_html(view, key, value, base_url, key_name, value_name, m, home,
+                                extra=extra, moved=distance > 0)
+        lines.append('<div class="slot{}"><div class="idx">[{}]{}</div><div class="chain">{}</div></div>'
+                     .format(" filled" if chain else "", i, label, content))
+
+    average = "{:.2f}".format(total_probes / n) if n else "-"
+    stats = (stat_html(len(clusters), "클러스터 수") + stat_html(longest, "가장 긴 클러스터")
+             + stat_html(moved_count, "홈에서 밀린 키") + stat_html(average, "성공 탐색 평균 칸 수"))
+    return lines, stats
 
 
 # ---------------------------------------------------------------------------
@@ -358,14 +441,23 @@ def main(argv=None):
     parser.add_argument("--port", type=int, default=8000)
     parser.add_argument("--bind", default="0.0.0.0")
     parser.add_argument("--demo", action="store_true", help="예시 URL을 미리 넣는다")
+    parser.add_argument("--table", choices=[c[0] for c in TABLE_CHOICES], default="chaining",
+                        help="해시 테이블 종류 (기본: chaining)")
     args = parser.parse_args(argv)
+
+    global SHORTENER, TABLE_LABEL
+    for name, factory, label in TABLE_CHOICES:
+        if name == args.table:
+            SHORTENER = Shortener(table_factory=factory)
+            TABLE_LABEL = label
 
     if args.demo:
         for u in DEMO_URLS:
             SHORTENER.shorten(u)
 
     httpd = ThreadingHTTPServer((args.bind, args.port), Handler)
-    print("http://localhost:{} 에서 실행 중 (Ctrl+C로 종료)".format(args.port), flush=True)
+    print("http://localhost:{} 에서 실행 중 · 테이블: {} (Ctrl+C로 종료)".format(args.port, TABLE_LABEL),
+          flush=True)
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
