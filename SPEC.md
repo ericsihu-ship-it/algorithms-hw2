@@ -204,3 +204,51 @@
   - 화면: α, n, 성공(실험·이론·차이), 실패(실험·이론·차이) 표
   - `experiments/results.csv`: 열은 `alpha,n,success_measured,success_theory,fail_measured,fail_theory`
   - `experiments/probe.svg`: 실험값(실선과 점)과 이론값(점선)을 한 그래프에. x축 "적재율 α = n / M", y축 "평균 비교 횟수", 범례 포함
+
+## 8. 과제: 선형 탐사 테이블
+
+파일: `src/linear_probing.py`, 클래스 `LinearProbingTable`
+
+### 8.1 동작
+
+- 인터페이스는 `HashTable`과 같다 (3.4절의 `put`, `get`, `find`, `len`, `in`, `load_factor`, `capacity`, `max_load`, `resize_count`, `slots`, `items`).
+  `slots()`는 칸마다 빈 리스트 또는 `(key, value)` 하나짜리 리스트를 담는다.
+- 추가로 `probe_sequence(key)`: 키를 찾거나 빈 칸을 만날 때까지 들여다본 칸 번호 목록.
+- 해시는 3.2절과 같은 호너 해시(`horner`)다. 칸 `h`에서 시작해 `h+1`, `h+2`, …로 한 칸씩 본다. 마지막 칸 `M−1` 다음은 0번 칸이다.
+- 빈 칸은 `None`이다. 삭제는 지원하지 않는다. (그래서 삭제 표시 칸도 없다.)
+- 생성자: `LinearProbingTable(capacity=11, max_load=0.5)`. `capacity` 규칙은 3.3절과 같다.
+  `max_load`는 0보다 크고 1 이하인 수(bool 제외)이거나 `None`. 아니면 `ValueError`.
+- `put`으로 새 키가 들어간 뒤 적재율이 `max_load`를 넘으면 칸 수를 `2M` 이상인 가장 작은 소수로 늘리고 모든 키를 다시 넣는다. `None`이면 늘리지 않는다.
+- 꽉 찬 테이블(`n = M`)에 **새 키**를 `put`하면 `OverflowError`. 이미 있는 키의 값을 바꾸는 것은 된다.
+
+### 8.2 비교 횟수
+
+- `find`의 두 번째 값은 **들여다본 칸 수**다. 빈 칸에서 멈추면 그 빈 칸도 1로 센다.
+  빈 테이블에서 실패하면 1, 꽉 찬 테이블에서 없는 키를 찾으면 `M`칸을 다 보고 `(None, M)`.
+- 이 셈법이 이론식 성공 ≈ (1 + 1/(1−α))/2, 실패 ≈ (1 + 1/(1−α)²)/2 와 같다. (α → 0이면 둘 다 1)
+- 체이닝은 빈 칸에서 실패하면 0으로 센다(3.4절, 7절). 두 방법은 세는 단위가 다르다.
+
+### 8.3 단축기와 서버
+
+- `Shortener(table_factory=LinearProbingTable)`로 선형 탐사를 쓴다. 기본은 체이닝 `HashTable`.
+- 단축기 테스트(6절 17~27번)는 두 테이블 모두에서 통과해야 한다.
+- 서버: `make serve TABLE=linear` (= `python3 src/server.py --table linear`)이면 선형 탐사를 쓴다.
+- 선형 탐사의 `/table`: 칸마다 키 하나 또는 `∅`. 키마다 홈 칸(호너 계산 과정), 탐사한 칸 경로(예: `5 → 6 → 7`), 홈에서 밀려난 칸 수를 보여 준다. 클러스터(연속으로 찬 칸) 길이도 보여 준다.
+
+### 8.4 비교 실험
+
+- `experiments/compare_experiment.py` (`make compare`).
+- 칸 수 `M = 4093`, 적재율 α = 0.1, 0.2, …, 0.9. 7절과 같은 방법으로 만든 **같은 키**(같은 시드)를 두 테이블에 넣는다. 두 테이블 모두 `max_load=None`.
+- 성공 탐색은 넣은 키 전부, 실패 탐색은 넣지 않은 URL 2000개의 평균. 시드 5개의 평균을 낸다.
+- 결과: `experiments/compare_results.csv`, `experiments/compare.svg` (실험값과 이론값을 한 그래프에).
+
+### 8.5 경계 사례 (선형 탐사)
+
+32. 3.4절의 공통 동작(빈 테이블, 값 바꾸기, 빈 문자열 키, 문자열 아닌 키, 많은 키, 크기 늘리기)이 두 테이블에서 같다
+33. 같은 홈 칸으로 가는 키는 다음 빈 칸으로 가고, `find`의 비교 횟수가 1, 2, 3, …으로 는다
+34. 홈 칸이 `M−1`인 키가 이미 있으면 같은 홈의 새 키는 0번 칸으로 넘어간다. 찾을 때 경로는 `[M−1, 0]`
+35. 빈 칸에서 실패하면 비교 횟수 1, 클러스터 안에서 시작하면 클러스터 끝의 빈 칸까지 센다
+36. `max_load=None`으로 꽉 채운 테이블: 모든 키를 찾고, 없는 키는 `(None, M)`, 새 키 `put`은 `OverflowError`, 있는 키 값 바꾸기는 된다
+37. 저장된 키마다 홈 칸부터 그 키가 있는 칸까지 빈 칸이 없다
+38. `max_load`가 0 이하이거나 1보다 크거나 숫자가 아니면(`True`) `ValueError`, `capacity`는 3.3절과 같은 규칙(`0`, `1.5`, `True`는 `ValueError`)
+39. 단축기 경계 사례 17~27번이 선형 탐사로도 통과한다
