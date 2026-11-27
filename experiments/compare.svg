@@ -1,0 +1,112 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="940" height="500" viewBox="0 0 940 500" font-family="system-ui, -apple-system, 'Segoe UI', 'Noto Sans KR', 'Malgun Gothic', sans-serif">
+<rect width="100%" height="100%" fill="#ffffff"/>
+<text x="64" y="30" font-size="17" font-weight="600" fill="#191919">체이닝 vs 선형 탐사: 적재율에 따른 평균 탐색 비용</text>
+<line x1="64" y1="56" x2="92" y2="56" stroke="#257de0" stroke-width="2"/>
+<circle cx="78" cy="56" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"/>
+<text x="100" y="60" font-size="13" fill="#191919">체이닝 · 실험</text>
+<line x1="239" y1="56" x2="267" y2="56" stroke="#257de0" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="275" y="60" font-size="13" fill="#191919">체이닝 · 이론</text>
+<line x1="414" y1="56" x2="442" y2="56" stroke="#f47230" stroke-width="2"/>
+<circle cx="428" cy="56" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"/>
+<text x="450" y="60" font-size="13" fill="#191919">선형 탐사 · 실험</text>
+<line x1="589" y1="56" x2="617" y2="56" stroke="#f47230" stroke-width="2" stroke-dasharray="6 5"/>
+<text x="625" y="60" font-size="13" fill="#191919">선형 탐사 · 이론</text>
+<text x="64" y="90" font-size="14" font-weight="600" fill="#191919">성공 탐색</text>
+<line x1="64" y1="404.0" x2="404" y2="404.0" stroke="#e6e6e6" stroke-width="1"/>
+<text x="56" y="408.0" font-size="12" fill="#666666" text-anchor="end">0</text>
+<line x1="64" y1="304.0" x2="404" y2="304.0" stroke="#e6e6e6" stroke-width="1"/>
+<text x="56" y="308.0" font-size="12" fill="#666666" text-anchor="end">2</text>
+<line x1="64" y1="204.0" x2="404" y2="204.0" stroke="#e6e6e6" stroke-width="1"/>
+<text x="56" y="208.0" font-size="12" fill="#666666" text-anchor="end">4</text>
+<line x1="64" y1="104.0" x2="404" y2="104.0" stroke="#e6e6e6" stroke-width="1"/>
+<text x="56" y="108.0" font-size="12" fill="#666666" text-anchor="end">6</text>
+<line x1="64.0" y1="404" x2="64.0" y2="409" stroke="#b3b3b3" stroke-width="1"/>
+<text x="64.0" y="424" font-size="12" fill="#666666" text-anchor="middle">0</text>
+<line x1="132.0" y1="404" x2="132.0" y2="409" stroke="#b3b3b3" stroke-width="1"/>
+<text x="132.0" y="424" font-size="12" fill="#666666" text-anchor="middle">0.2</text>
+<line x1="200.0" y1="404" x2="200.0" y2="409" stroke="#b3b3b3" stroke-width="1"/>
+<text x="200.0" y="424" font-size="12" fill="#666666" text-anchor="middle">0.4</text>
+<line x1="268.0" y1="404" x2="268.0" y2="409" stroke="#b3b3b3" stroke-width="1"/>
+<text x="268.0" y="424" font-size="12" fill="#666666" text-anchor="middle">0.6</text>
+<line x1="336.0" y1="404" x2="336.0" y2="409" stroke="#b3b3b3" stroke-width="1"/>
+<text x="336.0" y="424" font-size="12" fill="#666666" text-anchor="middle">0.8</text>
+<line x1="404.0" y1="404" x2="404.0" y2="409" stroke="#b3b3b3" stroke-width="1"/>
+<text x="404.0" y="424" font-size="12" fill="#666666" text-anchor="middle">1</text>
+<line x1="64" y1="404" x2="404" y2="404" stroke="#b3b3b3" stroke-width="1"/>
+<line x1="64" y1="104" x2="64" y2="404" stroke="#b3b3b3" stroke-width="1"/>
+<text x="234.0" y="448" font-size="13" fill="#191919" text-anchor="middle">적재율 α = n / M</text>
+<polyline points="98.0,351.5 132.0,349.0 166.0,346.5 200.0,344.0 234.0,341.5 268.0,339.0 302.0,336.5 336.0,334.0 370.0,331.5" fill="none" stroke="#257de0" stroke-width="2" stroke-dasharray="6 5" stroke-linecap="round"/>
+<polyline points="98.0,351.6 132.0,349.1 166.0,346.5 200.0,343.9 234.0,341.6 268.0,339.1 302.0,336.6 336.0,334.0 370.0,331.2" fill="none" stroke="#257de0" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="98.0" cy="351.6" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.1: 실험 1.048, 이론 1.050</title></circle>
+<circle cx="132.0" cy="349.1" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.2: 실험 1.098, 이론 1.100</title></circle>
+<circle cx="166.0" cy="346.5" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.3: 실험 1.151, 이론 1.150</title></circle>
+<circle cx="200.0" cy="343.9" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.4: 실험 1.202, 이론 1.200</title></circle>
+<circle cx="234.0" cy="341.6" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.5: 실험 1.249, 이론 1.250</title></circle>
+<circle cx="268.0" cy="339.1" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.6: 실험 1.298, 이론 1.300</title></circle>
+<circle cx="302.0" cy="336.6" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.7: 실험 1.348, 이론 1.350</title></circle>
+<circle cx="336.0" cy="334.0" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.8: 실험 1.400, 이론 1.400</title></circle>
+<circle cx="370.0" cy="331.2" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.9: 실험 1.456, 이론 1.450</title></circle>
+<text x="380.0" y="335.2" font-size="12" fill="#191919">체이닝</text>
+<polyline points="98.0,351.2 132.0,347.8 166.0,343.3 200.0,337.3 234.0,329.0 268.0,316.5 302.0,295.7 336.0,254.0 370.0,129.0" fill="none" stroke="#f47230" stroke-width="2" stroke-dasharray="6 5" stroke-linecap="round"/>
+<polyline points="98.0,351.3 132.0,347.9 166.0,342.9 200.0,337.1 234.0,329.5 268.0,317.9 302.0,300.1 336.0,258.9 370.0,137.2" fill="none" stroke="#f47230" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="98.0" cy="351.3" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.1: 실험 1.054, 이론 1.056</title></circle>
+<circle cx="132.0" cy="347.9" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.2: 실험 1.123, 이론 1.125</title></circle>
+<circle cx="166.0" cy="342.9" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.3: 실험 1.222, 이론 1.214</title></circle>
+<circle cx="200.0" cy="337.1" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.4: 실험 1.338, 이론 1.333</title></circle>
+<circle cx="234.0" cy="329.5" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.5: 실험 1.491, 이론 1.500</title></circle>
+<circle cx="268.0" cy="317.9" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.6: 실험 1.721, 이론 1.750</title></circle>
+<circle cx="302.0" cy="300.1" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.7: 실험 2.078, 이론 2.167</title></circle>
+<circle cx="336.0" cy="258.9" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.8: 실험 2.902, 이론 3.000</title></circle>
+<circle cx="370.0" cy="137.2" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.9: 실험 5.336, 이론 5.500</title></circle>
+<text x="380.0" y="141.2" font-size="12" fill="#191919">선형 탐사</text>
+<text x="524" y="90" font-size="14" font-weight="600" fill="#191919">실패 탐색</text>
+<line x1="524" y1="404.0" x2="864" y2="404.0" stroke="#e6e6e6" stroke-width="1"/>
+<text x="516" y="408.0" font-size="12" fill="#666666" text-anchor="end">0</text>
+<line x1="524" y1="304.0" x2="864" y2="304.0" stroke="#e6e6e6" stroke-width="1"/>
+<text x="516" y="308.0" font-size="12" fill="#666666" text-anchor="end">20</text>
+<line x1="524" y1="204.0" x2="864" y2="204.0" stroke="#e6e6e6" stroke-width="1"/>
+<text x="516" y="208.0" font-size="12" fill="#666666" text-anchor="end">40</text>
+<line x1="524" y1="104.0" x2="864" y2="104.0" stroke="#e6e6e6" stroke-width="1"/>
+<text x="516" y="108.0" font-size="12" fill="#666666" text-anchor="end">60</text>
+<line x1="524.0" y1="404" x2="524.0" y2="409" stroke="#b3b3b3" stroke-width="1"/>
+<text x="524.0" y="424" font-size="12" fill="#666666" text-anchor="middle">0</text>
+<line x1="592.0" y1="404" x2="592.0" y2="409" stroke="#b3b3b3" stroke-width="1"/>
+<text x="592.0" y="424" font-size="12" fill="#666666" text-anchor="middle">0.2</text>
+<line x1="660.0" y1="404" x2="660.0" y2="409" stroke="#b3b3b3" stroke-width="1"/>
+<text x="660.0" y="424" font-size="12" fill="#666666" text-anchor="middle">0.4</text>
+<line x1="728.0" y1="404" x2="728.0" y2="409" stroke="#b3b3b3" stroke-width="1"/>
+<text x="728.0" y="424" font-size="12" fill="#666666" text-anchor="middle">0.6</text>
+<line x1="796.0" y1="404" x2="796.0" y2="409" stroke="#b3b3b3" stroke-width="1"/>
+<text x="796.0" y="424" font-size="12" fill="#666666" text-anchor="middle">0.8</text>
+<line x1="864.0" y1="404" x2="864.0" y2="409" stroke="#b3b3b3" stroke-width="1"/>
+<text x="864.0" y="424" font-size="12" fill="#666666" text-anchor="middle">1</text>
+<line x1="524" y1="404" x2="864" y2="404" stroke="#b3b3b3" stroke-width="1"/>
+<line x1="524" y1="104" x2="524" y2="404" stroke="#b3b3b3" stroke-width="1"/>
+<text x="694.0" y="448" font-size="13" fill="#191919" text-anchor="middle">적재율 α = n / M</text>
+<polyline points="558.0,403.5 592.0,403.0 626.0,402.5 660.0,402.0 694.0,401.5 728.0,401.0 762.0,400.5 796.0,400.0 830.0,399.5" fill="none" stroke="#257de0" stroke-width="2" stroke-dasharray="6 5" stroke-linecap="round"/>
+<polyline points="558.0,403.5 592.0,403.0 626.0,402.5 660.0,402.0 694.0,401.5 728.0,400.9 762.0,400.4 796.0,399.9 830.0,399.5" fill="none" stroke="#257de0" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="558.0" cy="403.5" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.1: 실험 0.101, 이론 0.100</title></circle>
+<circle cx="592.0" cy="403.0" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.2: 실험 0.199, 이론 0.200</title></circle>
+<circle cx="626.0" cy="402.5" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.3: 실험 0.302, 이론 0.300</title></circle>
+<circle cx="660.0" cy="402.0" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.4: 실험 0.405, 이론 0.400</title></circle>
+<circle cx="694.0" cy="401.5" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.5: 실험 0.508, 이론 0.500</title></circle>
+<circle cx="728.0" cy="400.9" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.6: 실험 0.616, 이론 0.600</title></circle>
+<circle cx="762.0" cy="400.4" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.7: 실험 0.720, 이론 0.700</title></circle>
+<circle cx="796.0" cy="399.9" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.8: 실험 0.816, 이론 0.800</title></circle>
+<circle cx="830.0" cy="399.5" r="4.5" fill="#257de0" stroke="#ffffff" stroke-width="2"><title>체이닝 · α = 0.9: 실험 0.901, 이론 0.900</title></circle>
+<text x="840.0" y="403.5" font-size="12" fill="#191919">체이닝</text>
+<polyline points="558.0,398.4 592.0,397.6 626.0,396.4 660.0,394.6 694.0,391.5 728.0,385.9 762.0,373.7 796.0,339.0 830.0,151.5" fill="none" stroke="#f47230" stroke-width="2" stroke-dasharray="6 5" stroke-linecap="round"/>
+<polyline points="558.0,398.4 592.0,397.6 626.0,396.4 660.0,394.6 694.0,391.6 728.0,386.3 762.0,374.8 796.0,340.5 830.0,123.7" fill="none" stroke="#f47230" stroke-width="2" stroke-linejoin="round"/>
+<circle cx="558.0" cy="398.4" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.1: 실험 1.119, 이론 1.117</title></circle>
+<circle cx="592.0" cy="397.6" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.2: 실험 1.281, 이론 1.281</title></circle>
+<circle cx="626.0" cy="396.4" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.3: 실험 1.520, 이론 1.520</title></circle>
+<circle cx="660.0" cy="394.6" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.4: 실험 1.878, 이론 1.889</title></circle>
+<circle cx="694.0" cy="391.6" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.5: 실험 2.487, 이론 2.500</title></circle>
+<circle cx="728.0" cy="386.3" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.6: 실험 3.543, 이론 3.625</title></circle>
+<circle cx="762.0" cy="374.8" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.7: 실험 5.838, 이론 6.056</title></circle>
+<circle cx="796.0" cy="340.5" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.8: 실험 12.705, 이론 13.000</title></circle>
+<circle cx="830.0" cy="123.7" r="4.5" fill="#f47230" stroke="#ffffff" stroke-width="2"><title>선형 탐사 · α = 0.9: 실험 56.058, 이론 50.500</title></circle>
+<text x="840.0" y="127.7" font-size="12" fill="#191919">선형 탐사</text>
+<text transform="translate(18 254.0) rotate(-90)" font-size="13" fill="#191919" text-anchor="middle">평균 비교 횟수</text>
+<text x="64" y="488" font-size="11" fill="#666666">M = 4093, 같은 키, 시드 5개 평균. 체이닝은 비교한 노드 수(빈 칸 0), 선형 탐사는 들여다본 칸 수(빈 칸도 1). 두 칸의 y축 범위가 다르다.</text>
+</svg>
